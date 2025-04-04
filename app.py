@@ -57,7 +57,6 @@ cadastro_pacientes = st.Page(
     "secretaria/cadastro_pacientes.py",
     title="Cadastro de Pacientes",
     icon="📝",
-    default=(role == "Médico"),
 )
 
 
@@ -75,9 +74,17 @@ consultas = st.Page(
     default=(role == "Secretaria"),
 )
 
+kpis = st.Page(
+    "medico/kpis.py",
+    title="KPIs",
+    icon="📊",
+    default=(role == "Médico"),
+)
+
 # Create a list of pages for navigation
 account_pages = [logout_page, settings]
 secretary_pages = [cadastro_pacientes, marcar_consulta, consultas]
+doctor_pages = [kpis]
 
 # Título do aplicativo
 st.title("Gestão de Consultas Médicas")
@@ -85,8 +92,8 @@ st.title("Gestão de Consultas Médicas")
 page_dict = {}
 if st.session_state.role in ["Secretaria", "Médico", "Admin"]:
     page_dict["Secretaria"] = secretary_pages
-# if st.session_state.role in ["Médico", "Admin"]:
-#     page_dict["Médico"] = secretary_pages
+if st.session_state.role in ["Médico", "Admin"]:
+    page_dict["Médico"] = doctor_pages
 
 
 if len(page_dict) > 0:
