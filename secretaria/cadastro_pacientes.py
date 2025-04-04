@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 ### Seção 1: Cadastro de Pacientes
-st.header("1. Cadastro de Pacientes")
+st.header("Cadastro de Pacientes")
 
 with st.form("cadastro_paciente"):
     nome_paciente = st.text_input("Nome do Paciente")

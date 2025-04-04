@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 ### Seção 3: Monitoramento de Consultas do Dia
-st.header("3. Consultas do Dia")
+st.header("Consultas do Dia")
 
 hoje = datetime.now().date()
 consultas_hoje = st.session_state.consultas[st.session_state.consultas["Data"] == hoje]

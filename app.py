@@ -28,14 +28,36 @@ if "consultas" not in st.session_state:
 if "role" not in st.session_state:
     st.session_state.role = None
 
-# Título do aplicativo
-st.title("Gestão de Consultas Médicas")
+ROLES = [None, "Secretaria", "Médico", "Admin"]
+
+
+def login():
+
+    st.header("Log in")
+    role = st.selectbox("Choose your role", ROLES)
+
+    if st.button("Log in"):
+        st.session_state.role = role
+        st.rerun()
+
+
+def logout():
+    st.session_state.role = None
+    st.rerun()
+
+
+role = st.session_state.role
+
+logout_page = st.Page(logout, title="Log out", icon=":material/logout:")
+settings = st.Page("settings.py", title="Settings", icon=":material/settings:")
+
 
 # Define pages
 cadastro_pacientes = st.Page(
     "secretaria/cadastro_pacientes.py",
     title="Cadastro de Pacientes",
     icon="📝",
+    default=(role == "Médico"),
 )
 
 
@@ -43,19 +65,35 @@ marcar_consulta = st.Page(
     "secretaria/marcar_consulta.py",
     title="Marcar Consulta",
     icon="📋",
+    default=(role == "Admin"),
 )
 
 consultas = st.Page(
     "secretaria/consultas.py",
     title="Consultas do Dia",
     icon="📅",
+    default=(role == "Secretaria"),
 )
 
 # Create a list of pages for navigation
-pages = [cadastro_pacientes, marcar_consulta, consultas]
+account_pages = [logout_page, settings]
+secretary_pages = [cadastro_pacientes, marcar_consulta, consultas]
 
-# Set up navigation
-pg = st.navigation(pages)
+# Título do aplicativo
+st.title("Gestão de Consultas Médicas")
+
+page_dict = {}
+if st.session_state.role in ["Secretaria", "Médico", "Admin"]:
+    page_dict["Secretaria"] = secretary_pages
+# if st.session_state.role in ["Médico", "Admin"]:
+#     page_dict["Médico"] = secretary_pages
+
+
+if len(page_dict) > 0:
+    pg = st.navigation({"Account": account_pages} | page_dict)
+else:
+    pg = st.navigation([st.Page(login)])
+
 
 # Run the selected page
 pg.run()

@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 ### Seção 2: Cadastro de Consulta
-st.header("2. Cadastro de Consulta")
+st.header("Cadastro de Consulta")
 
 # Verificar se há pacientes cadastrados
 if not st.session_state.pacientes.empty:
