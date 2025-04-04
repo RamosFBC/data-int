@@ -18,6 +18,6 @@ Tabela Consulta: Id da consulta, Nome, Data, Pagamento 💰, Compareceu?, Primei
 
 Tabela de Leads: Nome, Telefone, email, como entrou em contato, marcou consulta? (gera id da consulta), veio à consulta?(conectar com tabela de consultas)
 
-Formulário de Satisfação: Formação, Comunicação, Segurança, Qualidade (1-5); Voltaria para próxima? Recomendaria?
+Formulário de Satisfação: Formação, Comunicação, Segurança, Qualidade (1-5); Voltaria para próxima? Recomendaria? Campo para Feedback
 
 insights: streamlit app to add data to a table

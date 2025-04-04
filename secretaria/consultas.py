@@ -2,27 +2,6 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-# Inicialização dos DataFrames no session_state para persistência durante a sessão
-if "pacientes" not in st.session_state:
-    st.session_state.pacientes = pd.DataFrame(
-        columns=["ID Paciente", "Nome", "Telefone", "Email", "Como Conheceu"]
-    )
-
-if "consultas" not in st.session_state:
-    st.session_state.consultas = pd.DataFrame(
-        columns=[
-            "ID Consulta",
-            "ID Paciente",
-            "Data",
-            "Hora",
-            "Pagamento",
-            "Compareceu",
-            "Primeira Consulta",
-            "Tipo",
-            "Convênio",
-            "Cancelou",
-        ]
-    )
 
 ### Seção 3: Monitoramento de Consultas do Dia
 st.header("3. Consultas do Dia")
