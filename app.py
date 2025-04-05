@@ -2,25 +2,24 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-# Inicialização dos DataFrames no session_state para persistência durante a sessão
-if "pacientes" not in st.session_state:
-    st.session_state.pacientes = pd.DataFrame(
-        columns=["ID Paciente", "Nome", "Telefone", "Email", "Como Conheceu"]
+# Initialize DataFrames in session_state for persistence during the session
+if "patients" not in st.session_state:
+    st.session_state.patients = pd.DataFrame(
+        columns=["Patient ID", "Name", "Phone", "Email", "Referral Source"]
     )
 
-if "consultas" not in st.session_state:
-    st.session_state.consultas = pd.DataFrame(
+if "appointments" not in st.session_state:
+    st.session_state.appointments = pd.DataFrame(
         columns=[
-            "ID Consulta",
-            "ID Paciente",
-            "Data",
-            "Hora",
-            "Pagamento",
-            "Compareceu",
-            "Primeira Consulta",
-            "Tipo",
-            "Convênio",
-            "Cancelou",
+            "Appointment ID",
+            "Patient ID",
+            "Date",
+            "Time",
+            "Payment Status",
+            "Attended",
+            "First Appointment",
+            "Insurance",
+            "Canceled",
         ]
     )
 
@@ -28,7 +27,7 @@ if "consultas" not in st.session_state:
 if "role" not in st.session_state:
     st.session_state.role = None
 
-ROLES = [None, "Secretaria", "Médico", "Admin"]
+ROLES = [None, "Secretary", "Doctor", "Admin"]
 
 
 def login():
@@ -53,46 +52,46 @@ settings = st.Page("settings.py", title="Settings", icon=":material/settings:")
 
 
 # Define pages
-cadastro_pacientes = st.Page(
-    "secretaria/cadastro_pacientes.py",
+patient_registration = st.Page(
+    "secretary/patient_registration.py",
     title="Cadastro de Pacientes",
     icon="📝",
 )
 
 
-marcar_consulta = st.Page(
-    "secretaria/marcar_consulta.py",
+appointment_registration = st.Page(
+    "secretary/appointment_registration.py",
     title="Marcar Consulta",
     icon="📋",
     default=(role == "Admin"),
 )
 
-consultas = st.Page(
-    "secretaria/consultas.py",
+appointments = st.Page(
+    "secretary/appointments.py",
     title="Consultas do Dia",
     icon="📅",
-    default=(role == "Secretaria"),
+    default=(role == "Secretary"),
 )
 
 kpis = st.Page(
     "medico/kpis.py",
     title="KPIs",
     icon="📊",
-    default=(role == "Médico"),
+    default=(role == "Doctor"),
 )
 
 # Create a list of pages for navigation
 account_pages = [logout_page, settings]
-secretary_pages = [cadastro_pacientes, marcar_consulta, consultas]
+secretary_pages = [patient_registration, appointment_registration, appointments]
 doctor_pages = [kpis]
 
 # Título do aplicativo
 st.title("Gestão de Consultas Médicas")
 
 page_dict = {}
-if st.session_state.role in ["Secretaria", "Médico", "Admin"]:
-    page_dict["Secretaria"] = secretary_pages
-if st.session_state.role in ["Médico", "Admin"]:
+if st.session_state.role in ["Secretary", "Doctor", "Admin"]:
+    page_dict["Cadastro"] = secretary_pages
+if st.session_state.role in ["Doctor", "Admin"]:
     page_dict["Médico"] = doctor_pages
 
 
@@ -108,6 +107,6 @@ pg.run()
 # Optional: Debug tables
 if st.checkbox("Exibir tabelas de dados (debug)"):
     st.subheader("Tabela de Pacientes")
-    st.write(st.session_state.pacientes)
+    st.write(st.session_state.patients)
     st.subheader("Tabela de Consultas")
-    st.write(st.session_state.consultas)
+    st.write(st.session_state.appointments)
