@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import requests
 
 
 ### Section 1: Patient Registration
@@ -31,4 +32,16 @@ if submit_patient:
     st.session_state.patients = pd.concat(
         [st.session_state.patients, new_patient], ignore_index=True
     )
+    # make a POST request
+    data = {
+        "patient_name": patient_name,
+        "patient_phone": patient_phone,
+        "patient_email": patient_email,
+        "referral_source": referral_source,
+    }
+    response = requests.post(
+        "https://feliperamos.app.n8n.cloud/webhook-test/c6bd068c-6aed-4e49-8b82-d0beb4b0e08d",
+        data=data,
+    )
+
     st.success(f"Patient {patient_name} successfully registered! ID: {patient_id}")
