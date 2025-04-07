@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import requests
 
 
 ### Section 2: Appointment Registration
@@ -59,6 +60,23 @@ if not st.session_state.patients.empty:
         st.session_state.appointments = pd.concat(
             [st.session_state.appointments, new_appointment], ignore_index=True
         )
+        data = {
+            "appointment_id": appointment_id,
+            "patient_id": patient_id,
+            "date": date,
+            "time": time,
+            "first_appointment": first_appointment,
+            "insurance": insurance,
+            "payment_status": 0.0,
+            "attended": False,
+            "canceled": False,
+        }
+
+        response = requests.post(
+            "https://feliperamos.app.n8n.cloud/webhook-test/ab552521-bb9e-4eeb-b60e-bd2e66c3ce45",
+            data=data,
+        )
+
         st.success(
             f"Appointment successfully scheduled! Appointment ID: {appointment_id}"
         )
