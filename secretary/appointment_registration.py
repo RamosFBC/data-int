@@ -73,7 +73,7 @@ if not st.session_state.patients.empty:
         }
 
         response = requests.post(
-            "https://feliperamos.app.n8n.cloud/webhook-test/ab552521-bb9e-4eeb-b60e-bd2e66c3ce45",
+            "https://feliperamos.app.n8n.cloud/webhook-test/03bebc41-3821-4a55-9926-c5c7949c839a",
             data=data,
         )
 

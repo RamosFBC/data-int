@@ -2,42 +2,69 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import requests
+import aiohttp
+import asyncio
 
-# Initialize DataFrames in session_state for persistence during the session
-if "patients" not in st.session_state:
-    data = requests.get(
-        "https://feliperamos.app.n8n.cloud/webhook-test/21afb425-402d-4fa8-8b19-cd2b92d42fb2"
-    ).json()
-    print(data)
-    if data:
-        st.session_state.patients = pd.DataFrame(data)
-    # Populate the state with retrieved data
-    else:
-        st.session_state.patients = pd.DataFrame(
-            columns=[
-                "row_number",
-                "Patient ID",
-                "Name",
-                "Phone",
-                "Email",
-                "Referral Source",
-            ]
-        )
 
-if "appointments" not in st.session_state:
-    st.session_state.appointments = pd.DataFrame(
-        columns=[
-            "Appointment ID",
-            "Patient ID",
-            "Date",
-            "Time",
-            "Payment Status",
-            "Attended",
-            "First Appointment",
-            "Insurance",
-            "Canceled",
-        ]
+# Define asynchronous function to fetch data
+async def fetch_data(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            return await response.json()
+
+
+# Define a function to initialize session state with async calls
+async def initialize_data():
+    # Fetch patients and appointments concurrently
+    patients_url = "https://feliperamos.app.n8n.cloud/webhook-test/21afb425-402d-4fa8-8b19-cd2b92d42fb2"
+    appointments_url = "https://feliperamos.app.n8n.cloud/webhook-test/2e52fa9c-613c-4ff7-8f14-849340bf57ae"
+
+    patients_data, appointments_data = await asyncio.gather(
+        fetch_data(patients_url),
+        fetch_data(appointments_url),
     )
+
+    # Initialize patients data
+    if "patients" not in st.session_state:
+        if patients_data:
+            st.session_state.patients = pd.DataFrame(patients_data)
+        else:
+            st.session_state.patients = pd.DataFrame(
+                columns=[
+                    "row_number",
+                    "Patient ID",
+                    "Name",
+                    "Phone",
+                    "Email",
+                    "Referral Source",
+                ]
+            )
+        print("Patients data initialized:", st.session_state.patients)
+
+    # Initialize appointments data
+    if "appointments" not in st.session_state:
+        if appointments_data:
+            st.session_state.appointments = pd.DataFrame(appointments_data)
+        else:
+            st.session_state.appointments = pd.DataFrame(
+                columns=[
+                    "row_number",
+                    "Appointment ID",
+                    "Patient ID",
+                    "Date",
+                    "Time",
+                    "Payment Status",
+                    "Attended",
+                    "First Appointment",
+                    "Insurance",
+                    "Canceled",
+                ]
+            )
+        print("Appointments data initialized:", st.session_state.appointments)
+
+
+# Run the asynchronous initialization
+asyncio.run(initialize_data())
 
 
 if "role" not in st.session_state:

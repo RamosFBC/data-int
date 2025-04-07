@@ -18,6 +18,10 @@ todays_appointments = st.session_state.appointments[
 ]
 
 if not todays_appointments.empty:
+    # convert 'Time' to datetime.time for consistent comparison
+    todays_appointments["Time"] = pd.to_datetime(
+        todays_appointments["Time"], format="%H:%M:%S"
+    ).dt.time
     todays_appointments = todays_appointments.sort_values(by="Time")
     st.write(f"Appointments scheduled for today ({today}):")
     for index, appointment in todays_appointments.iterrows():
@@ -26,7 +30,7 @@ if not todays_appointments.empty:
             st.session_state.patients["Patient ID"] == appointment["Patient ID"]
         ]["Name"].values[0]
 
-        st.subheader(f"Time: {appointment['Time']}")
+        st.subheader(f"Hora: {appointment['Time']}")
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
