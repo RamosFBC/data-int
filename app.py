@@ -1,12 +1,28 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import requests
 
 # Initialize DataFrames in session_state for persistence during the session
 if "patients" not in st.session_state:
-    st.session_state.patients = pd.DataFrame(
-        columns=["Patient ID", "Name", "Phone", "Email", "Referral Source"]
-    )
+    data = requests.get(
+        "https://feliperamos.app.n8n.cloud/webhook-test/21afb425-402d-4fa8-8b19-cd2b92d42fb2"
+    ).json()
+    print(data)
+    if data:
+        st.session_state.patients = pd.DataFrame(data)
+    # Populate the state with retrieved data
+    else:
+        st.session_state.patients = pd.DataFrame(
+            columns=[
+                "row_number",
+                "Patient ID",
+                "Name",
+                "Phone",
+                "Email",
+                "Referral Source",
+            ]
+        )
 
 if "appointments" not in st.session_state:
     st.session_state.appointments = pd.DataFrame(
