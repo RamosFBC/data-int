@@ -76,6 +76,7 @@ if not st.session_state.patients.empty:
             "https://feliperamos.app.n8n.cloud/webhook-test/03bebc41-3821-4a55-9926-c5c7949c839a",
             data=data,
         )
+        st.write(response)
 
         st.success(
             f"Appointment successfully scheduled! Appointment ID: {appointment_id}"

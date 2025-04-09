@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import requests
 
 
 ### Section 3: Monitoring Today's Appointments
@@ -40,6 +41,14 @@ if not todays_appointments.empty:
             ):
                 st.session_state.appointments.at[index, "Attended"] = True
                 st.session_state.appointments.at[index, "Canceled"] = False
+                data = {
+                    "Appointment ID": appointment["Appointment ID"],
+                    "Attended": True,
+                    "Canceled": False,
+                }
+                # Update the tables at google sheetes with n8n api
+                url = "https://feliperamos.app.n8n.cloud/webhook-test/4b863963-7c56-43f6-84e0-7768137f2645"
+                response = requests.post(url, json=data)
                 st.success(
                     f"Appointment ID {appointment['Appointment ID']} marked as attended successfully!"
                 )

@@ -22,6 +22,11 @@ if not st.session_state.appointments.empty:
         st.session_state.appointments["Insurance"] != "Private"
     )
 
+    # Ensure payments status is a float for calculations
+    st.session_state.appointments["Payment Status"] = st.session_state.appointments[
+        "Payment Status"
+    ].astype(float)
+
 # Function definitions for KPI calculations
 
 
