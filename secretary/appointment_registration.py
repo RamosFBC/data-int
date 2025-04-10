@@ -43,23 +43,6 @@ if not st.session_state.patients.empty:
                 == 0
             )
 
-        # Create a new entry in the Appointments table with the patient ID
-        new_appointment = pd.DataFrame(
-            {
-                "Appointment ID": [appointment_id],
-                "Patient ID": [patient_id],
-                "Date": [date],
-                "Time": [time],
-                "Payment Status": [0.0],
-                "Attended": [False],
-                "First Appointment": [first_appointment],
-                "Insurance": [insurance],
-                "Canceled": [False],
-            }
-        )
-        st.session_state.appointments = pd.concat(
-            [st.session_state.appointments, new_appointment], ignore_index=True
-        )
         data = {
             "appointment_id": appointment_id,
             "patient_id": patient_id,
@@ -76,10 +59,39 @@ if not st.session_state.patients.empty:
             "https://feliperamos.app.n8n.cloud/webhook-test/03bebc41-3821-4a55-9926-c5c7949c839a",
             data=data,
         )
-        st.write(response)
+        # Load response return data and update session state
+        if response.status_code == 200:
+            response_data = response.json()
+            st.write(response_data)
+            # Ensure correct data types
+            response_data["Date"] = pd.to_datetime(
+                response_data["Date"], format="%Y-%m-%d"
+            ).date()
+            response_data["Time"] = pd.to_datetime(
+                response_data["Time"], format="%H:%M:%S"
+            ).time()
+            response_data["Payment Status"] = float(response_data["Payment Status"])
+            response_data["Attended"] = (
+                False if response_data["Attended"] == "false" else True
+            )
+            response_data["First Appointment"] = (
+                False if response_data["First Appointment"] == "false" else True
+            )
 
-        st.success(
-            f"Appointment successfully scheduled! Appointment ID: {appointment_id}"
-        )
+            response_data["Canceled"] = (
+                False if response_data["Canceled"] == "false" else True
+            )
+            response_data["Insurance"] = str(response_data["Insurance"])
+            response_data["row_number"] = int(response_data["row_number"])
+            new_appointment = pd.DataFrame([response_data])
+            st.session_state.appointments = pd.concat(
+                [st.session_state.appointments, new_appointment], ignore_index=True
+            )
+            st.success(
+                f"Appointment successfully scheduled! Appointment ID: {response_data['Appointment ID']}"
+            )
+        else:
+            st.error("Error scheduling appointment.")
+
 else:
     st.warning("No patients registered. Please register a patient first.")

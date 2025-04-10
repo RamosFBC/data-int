@@ -16,8 +16,8 @@ async def fetch_data(url):
 # Define a function to initialize session state with async calls
 async def initialize_data():
     # Fetch patients and appointments concurrently
-    patients_url = "https://feliperamos.app.n8n.cloud/webhook-test/21afb425-402d-4fa8-8b19-cd2b92d42fb2"
-    appointments_url = "https://feliperamos.app.n8n.cloud/webhook-test/2e52fa9c-613c-4ff7-8f14-849340bf57ae"
+    patients_url = st.secrets["n8n"]["patients_url"]
+    appointments_url = st.secrets["n8n"]["appointments_url"]
 
     patients_data, appointments_data = await asyncio.gather(
         fetch_data(patients_url),
@@ -63,8 +63,15 @@ async def initialize_data():
         print("Appointments data initialized:", st.session_state.appointments)
 
 
-# Run the asynchronous initialization
-asyncio.run(initialize_data())
+# Function to run initialization only once
+def run_initialization():
+    if "data_initialized" not in st.session_state:
+        # Set the flag to prevent re-running
+        st.session_state.data_initialized = False
+        # Run the async initialization
+        asyncio.run(initialize_data())
+        # Mark initialization as complete
+        st.session_state.data_initialized = True
 
 
 if "role" not in st.session_state:
@@ -130,6 +137,9 @@ doctor_pages = [kpis]
 
 # Título do aplicativo
 st.title("Gestão de Consultas Médicas")
+
+# Run initialization only once
+run_initialization()
 
 page_dict = {}
 if st.session_state.role in ["Secretary", "Doctor", "Admin"]:

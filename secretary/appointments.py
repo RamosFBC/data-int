@@ -7,29 +7,35 @@ import requests
 ### Section 3: Monitoring Today's Appointments
 st.header("Today's Appointments")
 
-# Convert 'Date' to datetime.date for consistent comparison
+# Ensure 'Date' is in datetime64[ns] format (don't convert to .dt.date permanently)
 if not st.session_state.appointments.empty:
+    # Convert 'Date' to datetime64[ns] if it isn't already
     st.session_state.appointments["Date"] = pd.to_datetime(
         st.session_state.appointments["Date"]
-    ).dt.date
+    )
 
 today = datetime.now().date()
+# Use .dt.date only for comparison, not for modifying the column
 todays_appointments = st.session_state.appointments[
-    st.session_state.appointments["Date"] == today
+    st.session_state.appointments["Date"].dt.date == today
 ]
 
 if not todays_appointments.empty:
-    # convert 'Time' to datetime.time for consistent comparison
+    # Convert 'Time' to datetime.time for sorting/display
     todays_appointments["Time"] = pd.to_datetime(
         todays_appointments["Time"], format="%H:%M:%S"
     ).dt.time
     todays_appointments = todays_appointments.sort_values(by="Time")
     st.write(f"Appointments scheduled for today ({today}):")
     for index, appointment in todays_appointments.iterrows():
-        # Retrieve the patient's name by their ID
-        patient_name = st.session_state.patients[
+        # Retrieve the patient's name by their ID, with a fallback
+        patient_match = st.session_state.patients[
             st.session_state.patients["Patient ID"] == appointment["Patient ID"]
-        ]["Name"].values[0]
+        ]
+        if not patient_match.empty:
+            patient_name = patient_match["Name"].values[0]
+        else:
+            patient_name = "Unknown Patient"
 
         st.subheader(f"Hora: {appointment['Time']}")
         col1, col2, col3, col4 = st.columns(4)
@@ -46,7 +52,6 @@ if not todays_appointments.empty:
                     "Attended": True,
                     "Canceled": False,
                 }
-                # Update the tables at google sheetes with n8n api
                 url = "https://feliperamos.app.n8n.cloud/webhook-test/4b863963-7c56-43f6-84e0-7768137f2645"
                 response = requests.post(url, json=data)
                 st.success(
@@ -76,3 +81,16 @@ if not todays_appointments.empty:
         st.write("---")
 else:
     st.write("No appointments scheduled for today.")
+
+# Debug section
+if st.checkbox("Exibir tabelas de dados (debug)"):
+    st.subheader("Tabela de Pacientes")
+    st.write(st.session_state.patients)
+    st.subheader("Tabela de Consultas")
+    # Optionally convert 'Date' and 'Time' to strings for display
+    display_df = st.session_state.appointments.copy()
+    display_df["Date"] = display_df["Date"].dt.strftime("%Y-%m-%d")
+    display_df["Time"] = pd.to_datetime(
+        display_df["Time"], format="%H:%M:%S"
+    ).dt.strftime("%H:%M:%S")
+    st.write(display_df)
