@@ -54,6 +54,21 @@ if not todays_appointments.empty:
                 }
                 url = "https://feliperamos.app.n8n.cloud/webhook-test/4b863963-7c56-43f6-84e0-7768137f2645"
                 response = requests.post(url, json=data)
+                response_data = response.json()
+                # Ensure correct data types
+                response_data["Attended"] = (
+                    False if response_data["Attended"] == "false" else True
+                )
+                response_data["Canceled"] = (
+                    False if response_data["Canceled"] == "false" else True
+                )
+                # Update the appointment status in session state
+                st.session_state.appointments.at[index, "Attended"] = response_data[
+                    "Attended"
+                ]
+                st.session_state.appointments.at[index, "Canceled"] = response_data[
+                    "Canceled"
+                ]
                 st.success(
                     f"Appointment ID {appointment['Appointment ID']} marked as attended successfully!"
                 )
