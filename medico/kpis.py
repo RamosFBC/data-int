@@ -109,24 +109,6 @@ else:
         ltv = calculate_ltv(df_appointments)
         retention_rate = calculate_retention_rate(df_appointments)
 
-        st.subheader("Ticket Médio Anual (R$)")
-        st.write(average_ticket.to_frame("Ticket Médio"))
-
-        st.subheader("Taxa de Conversão Anual (%)")
-        st.write(conversion_rate.to_frame("Taxa de Conversão"))
-
-        st.subheader("Percentual de Convênios Anual (%)")
-        st.write(insurance_percentage.to_frame("Percentual de Convênios"))
-
-        st.subheader("Taxa de Faltas Anual (%)")
-        st.write(no_show_rate.to_frame("Taxa de Faltas"))
-
-        st.subheader("LTV Médio (R$)")
-        st.write(ltv)
-
-        st.subheader("Taxa de Retenção (%)")
-        st.write(retention_rate)
-
     elif period == "Mensal":
         average_ticket = calculate_average_ticket(df_appointments, "monthly")
         conversion_rate = calculate_conversion_rate(df_appointments, "monthly")
@@ -137,25 +119,39 @@ else:
         ltv = calculate_ltv(df_appointments)
         retention_rate = calculate_retention_rate(df_appointments)
 
-        st.subheader("Ticket Médio Mensal (R$)")
-        st.write(average_ticket.to_frame("Ticket Médio"))
+    # Display KPIs in a professional layout
+    st.subheader("KPIs da Clínica")
+    col1, col2, col3 = st.columns(3)
+    col1.metric(
+        "Ticket Médio (R$)",
+        average_ticket.iloc[-1] if not average_ticket.empty else "N/A",
+    )
+    col2.metric(
+        "Taxa de Conversão (%)",
+        conversion_rate.iloc[-1] if not conversion_rate.empty else "N/A",
+    )
+    col3.metric(
+        "Percentual de Convênios (%)",
+        insurance_percentage.iloc[-1] if not insurance_percentage.empty else "N/A",
+    )
 
-        st.subheader("Taxa de Conversão Mensal (%)")
-        st.write(conversion_rate.to_frame("Taxa de Conversão"))
+    col4, col5, col6 = st.columns(3)
+    col4.metric(
+        "Taxa de Faltas (%)", no_show_rate.iloc[-1] if not no_show_rate.empty else "N/A"
+    )
+    col5.metric("LTV Médio (R$)", ltv if ltv != 0 else "N/A")
+    col6.metric(
+        "Taxa de Retenção (%)", retention_rate if retention_rate != 0 else "N/A"
+    )
 
-        st.subheader("Percentual de Convênios Mensal (%)")
-        st.write(insurance_percentage.to_frame("Percentual de Convênios"))
-
-        st.subheader("Taxa de Faltas Mensal (%)")
-        st.write(no_show_rate.to_frame("Taxa de Faltas"))
-
-        st.subheader("LTV Médio (R$)")
-        st.write(ltv)
-
-        st.subheader("Taxa de Retenção (%)")
-        st.write(retention_rate)
-
-# Optional: Debug view of the appointments DataFrame
-if st.checkbox("Mostrar dados das consultas (debug)"):
-    st.subheader("Tabela de Consultas")
-    st.write(df_appointments)
+    # Optional: Show detailed data
+    if st.checkbox("Mostrar dados detalhados"):
+        st.subheader("Detalhes dos KPIs")
+        st.write("Ticket Médio")
+        st.dataframe(average_ticket.to_frame("Ticket Médio"))
+        st.write("Taxa de Conversão")
+        st.dataframe(conversion_rate.to_frame("Taxa de Conversão"))
+        st.write("Percentual de Convênios")
+        st.dataframe(insurance_percentage.to_frame("Percentual de Convênios"))
+        st.write("Taxa de Faltas")
+        st.dataframe(no_show_rate.to_frame("Taxa de Faltas"))
