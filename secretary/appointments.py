@@ -32,6 +32,9 @@ if not todays_appointments.empty:
         patient_match = st.session_state.patients[
             st.session_state.patients["Patient ID"] == appointment["Patient ID"]
         ]
+        st.write(
+            f"Appointment ID: {appointment['Appointment ID']}, Patient ID: {appointment['Patient ID']}"
+        )
         if not patient_match.empty:
             patient_name = patient_match["Name"].values[0]
         else:
@@ -77,6 +80,28 @@ if not todays_appointments.empty:
             if st.button(
                 "Cancel Appointment", key=f"cancel_{appointment['Appointment ID']}"
             ):
+                data = {
+                    "Appointment ID": appointment["Appointment ID"],
+                    "Canceled": True,
+                    "Attended": False,
+                }
+                url = "https://feliperamos.app.n8n.cloud/webhook-test/4b863963-7c56-43f6-84e0-7768137f2645"
+                response = requests.post(url, json=data)
+                response_data = response.json()
+                # Ensure correct data types
+                response_data["Canceled"] = (
+                    False if response_data["Canceled"] == "false" else True
+                )
+                response_data["Attended"] = (
+                    False if response_data["Attended"] == "false" else True
+                )
+                # Update the appointment status in session state
+                st.session_state.appointments.at[index, "Canceled"] = response_data[
+                    "Canceled"
+                ]
+                st.session_state.appointments.at[index, "Attended"] = response_data[
+                    "Attended"
+                ]
                 st.session_state.appointments.at[index, "Canceled"] = True
                 st.success(
                     f"Appointment ID {appointment['Appointment ID']} canceled successfully!"
@@ -95,7 +120,7 @@ if not todays_appointments.empty:
             if st.button(
                 "Save Payment", key=f"save_payment_{appointment['Appointment ID']}"
             ):
-                st.session_state.appointments.at[index, "Payment Status"] = payment
+                # st.session_state.appointments.at[index, "Payment Status"] = payment
                 data = {
                     "Appointment ID": appointment["Appointment ID"],
                     "Payment Status": payment,
