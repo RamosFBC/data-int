@@ -96,16 +96,3 @@ if not todays_appointments.empty:
         st.write("---")
 else:
     st.write("No appointments scheduled for today.")
-
-# Debug section
-if st.checkbox("Exibir tabelas de dados (debug)"):
-    st.subheader("Tabela de Pacientes")
-    st.write(st.session_state.patients)
-    st.subheader("Tabela de Consultas")
-    # Optionally convert 'Date' and 'Time' to strings for display
-    display_df = st.session_state.appointments.copy()
-    display_df["Date"] = display_df["Date"].dt.strftime("%Y-%m-%d")
-    display_df["Time"] = pd.to_datetime(
-        display_df["Time"], format="%H:%M:%S"
-    ).dt.strftime("%H:%M:%S")
-    st.write(display_df)
