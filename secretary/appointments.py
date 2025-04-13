@@ -92,7 +92,24 @@ if not todays_appointments.empty:
                 value=float(appointment["Payment Status"]),
                 key=f"payment_{appointment['Appointment ID']}",
             )
-            st.session_state.appointments.at[index, "Payment Status"] = payment
+            if st.button(
+                "Save Payment", key=f"save_payment_{appointment['Appointment ID']}"
+            ):
+                st.session_state.appointments.at[index, "Payment Status"] = payment
+                data = {
+                    "Appointment ID": appointment["Appointment ID"],
+                    "Payment Status": payment,
+                }
+                url = "https://feliperamos.app.n8n.cloud/webhook-test/4b863963-7c56-43f6-84e0-7768137f2645"
+                response = requests.post(url, json=data)
+                response_data = response.json()
+                # Assuming the API returns the updated payment status
+                st.session_state.appointments.at[index, "Payment Status"] = float(
+                    response_data.get("Payment Status", payment)
+                )
+                st.success(
+                    f"Payment for Appointment ID {appointment['Appointment ID']} updated to R${payment:.2f}!"
+                )
         st.write("---")
 else:
     st.write("No appointments scheduled for today.")
