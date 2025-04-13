@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Title of the page
-st.title("Clinic KPIs")
+st.title("KPIs da Clínica")
 
 # Ensure the DataFrame 'Date' column is in datetime format
 if not st.session_state.appointments.empty:
@@ -94,14 +94,14 @@ def calculate_retention_rate(df):
 df_appointments = st.session_state.appointments
 
 # User interface to select the period
-period = st.selectbox("Select the period", ["Annual", "Monthly"])
+period = st.selectbox("Selecione o período", ["Anual", "Mensal"])
 
 # Check if there is data to process
 if df_appointments.empty:
-    st.warning("No appointment data available to calculate KPIs.")
+    st.warning("Nenhum dado de consulta disponível para calcular os KPIs.")
 else:
     # Calculate KPIs based on selected period
-    if period == "Annual":
+    if period == "Anual":
         average_ticket = calculate_average_ticket(df_appointments, "annual")
         conversion_rate = calculate_conversion_rate(df_appointments, "annual")
         insurance_percentage = calculate_insurance_percentage(df_appointments, "annual")
@@ -109,25 +109,25 @@ else:
         ltv = calculate_ltv(df_appointments)
         retention_rate = calculate_retention_rate(df_appointments)
 
-        st.subheader("Annual Average Ticket (R$)")
-        st.write(average_ticket.to_frame("Average Ticket"))
+        st.subheader("Ticket Médio Anual (R$)")
+        st.write(average_ticket.to_frame("Ticket Médio"))
 
-        st.subheader("Annual Conversion Rate (%)")
-        st.write(conversion_rate.to_frame("Conversion Rate"))
+        st.subheader("Taxa de Conversão Anual (%)")
+        st.write(conversion_rate.to_frame("Taxa de Conversão"))
 
-        st.subheader("Annual Insurance Percentage (%)")
-        st.write(insurance_percentage.to_frame("Insurance Percentage"))
+        st.subheader("Percentual de Convênios Anual (%)")
+        st.write(insurance_percentage.to_frame("Percentual de Convênios"))
 
-        st.subheader("Annual No-show Rate (%)")
-        st.write(no_show_rate.to_frame("No-show Rate"))
+        st.subheader("Taxa de Faltas Anual (%)")
+        st.write(no_show_rate.to_frame("Taxa de Faltas"))
 
-        st.subheader("Average LTV (R$)")
+        st.subheader("LTV Médio (R$)")
         st.write(ltv)
 
-        st.subheader("Retention Rate (%)")
+        st.subheader("Taxa de Retenção (%)")
         st.write(retention_rate)
 
-    elif period == "Monthly":
+    elif period == "Mensal":
         average_ticket = calculate_average_ticket(df_appointments, "monthly")
         conversion_rate = calculate_conversion_rate(df_appointments, "monthly")
         insurance_percentage = calculate_insurance_percentage(
@@ -137,25 +137,25 @@ else:
         ltv = calculate_ltv(df_appointments)
         retention_rate = calculate_retention_rate(df_appointments)
 
-        st.subheader("Monthly Average Ticket (R$)")
-        st.write(average_ticket.to_frame("Average Ticket"))
+        st.subheader("Ticket Médio Mensal (R$)")
+        st.write(average_ticket.to_frame("Ticket Médio"))
 
-        st.subheader("Monthly Conversion Rate (%)")
-        st.write(conversion_rate.to_frame("Conversion Rate"))
+        st.subheader("Taxa de Conversão Mensal (%)")
+        st.write(conversion_rate.to_frame("Taxa de Conversão"))
 
-        st.subheader("Monthly Insurance Percentage (%)")
-        st.write(insurance_percentage.to_frame("Insurance Percentage"))
+        st.subheader("Percentual de Convênios Mensal (%)")
+        st.write(insurance_percentage.to_frame("Percentual de Convênios"))
 
-        st.subheader("Monthly No-show Rate (%)")
-        st.write(no_show_rate.to_frame("No-show Rate"))
+        st.subheader("Taxa de Faltas Mensal (%)")
+        st.write(no_show_rate.to_frame("Taxa de Faltas"))
 
-        st.subheader("Average LTV (R$)")
+        st.subheader("LTV Médio (R$)")
         st.write(ltv)
 
-        st.subheader("Retention Rate (%)")
+        st.subheader("Taxa de Retenção (%)")
         st.write(retention_rate)
 
 # Optional: Debug view of the appointments DataFrame
-if st.checkbox("Show appointment data (debug)"):
-    st.subheader("Appointments Table")
+if st.checkbox("Mostrar dados das consultas (debug)"):
+    st.subheader("Tabela de Consultas")
     st.write(df_appointments)

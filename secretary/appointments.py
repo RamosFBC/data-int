@@ -5,7 +5,7 @@ import requests
 
 
 ### Section 3: Monitoring Today's Appointments
-st.header("Today's Appointments")
+st.header("Todas as Consultas de Hoje")
 
 # Ensure 'Date' is in datetime64[ns] format (don't convert to .dt.date permanently)
 if not st.session_state.appointments.empty:
@@ -26,7 +26,7 @@ if not todays_appointments.empty:
         todays_appointments["Time"], format="%H:%M:%S"
     ).dt.time
     todays_appointments = todays_appointments.sort_values(by="Time")
-    st.write(f"Appointments scheduled for today ({today}):")
+    st.write(f"Consultas de hoje ({today}):")
     for index, appointment in todays_appointments.iterrows():
         # Retrieve the patient's name by their ID, with a fallback
         patient_match = st.session_state.patients[
@@ -44,9 +44,9 @@ if not todays_appointments.empty:
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
-            st.write(f"Name: {patient_name}")
+            st.write(f"Nome: {patient_name}")
             if st.button(
-                "Mark as Attended", key=f"attended_{appointment['Appointment ID']}"
+                "Consulta Realizada", key=f"attended_{appointment['Appointment ID']}"
             ):
                 st.session_state.appointments.at[index, "Attended"] = True
                 st.session_state.appointments.at[index, "Canceled"] = False
@@ -78,7 +78,7 @@ if not todays_appointments.empty:
 
         with col2:
             if st.button(
-                "Cancel Appointment", key=f"cancel_{appointment['Appointment ID']}"
+                "Cancelar Consulta", key=f"cancel_{appointment['Appointment ID']}"
             ):
                 data = {
                     "Appointment ID": appointment["Appointment ID"],
@@ -108,17 +108,17 @@ if not todays_appointments.empty:
                 )
 
         with col3:
-            st.write(f"Insurance: {appointment['Insurance']}")
+            st.write(f"Convênio: {appointment['Insurance']}")
 
         with col4:
             payment = st.number_input(
-                "Payment (R$)",
+                "Pagamento (R$)",
                 min_value=0.0,
                 value=float(appointment["Payment Status"]),
                 key=f"payment_{appointment['Appointment ID']}",
             )
             if st.button(
-                "Save Payment", key=f"save_payment_{appointment['Appointment ID']}"
+                "Salvar Pagamento", key=f"save_payment_{appointment['Appointment ID']}"
             ):
                 # st.session_state.appointments.at[index, "Payment Status"] = payment
                 data = {

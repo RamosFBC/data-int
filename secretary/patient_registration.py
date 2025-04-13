@@ -15,7 +15,7 @@ referral_map = {
 # Reverse mapping for processing
 reverse_referral_map = {v: k for k, v in referral_map.items()}
 ### Section 1: Patient Registration
-st.header("Patient Registration")
+st.header("Registrar Paciente")
 
 with st.form("patient_registration"):
     patient_name = st.text_input("Nome do paciente")
@@ -25,7 +25,7 @@ with st.form("patient_registration"):
         "Como o paciente conheceu o médico?",
         list(referral_map.values()),
     )
-    submit_patient = st.form_submit_button("Register Patient")
+    submit_patient = st.form_submit_button("Registrar Paciente")
 
 if submit_patient:
     # Generate a unique ID for the patient

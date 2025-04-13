@@ -5,23 +5,23 @@ import requests
 
 
 ### Section 2: Appointment Registration
-st.header("Appointment Registration")
+st.header("Marcar Consulta")
 
 # Check if there are registered patients
 if not st.session_state.patients.empty:
     # Create a list of patients for selection
     patients_list = st.session_state.patients["Name"].tolist()
-    selected_patient = st.selectbox("Select Patient", patients_list)
+    selected_patient = st.selectbox("Selecione o Paciente", patients_list)
 
     with st.form("appointment_registration"):
-        date = st.date_input("Appointment Date")
+        date = st.date_input("Data da Consulta")
         date = pd.to_datetime(date).date()
-        time = st.time_input("Appointment Time")
+        time = st.time_input("Hora da Consulta")
 
         insurance = st.selectbox(
-            "Insurance", ["Unimed", "Bradesco Saúde", "Amil", "Private", "Other"]
+            "Convênio", ["Unimed", "Bradesco Saúde", "Amil", "Private", "Other"]
         )
-        submit_appointment = st.form_submit_button("Schedule Appointment")
+        submit_appointment = st.form_submit_button("Marcar Consulta")
 
     if submit_appointment:
         # Find the ID of the selected patient
