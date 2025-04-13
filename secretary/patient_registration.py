@@ -55,5 +55,23 @@ if submit_patient:
         "https://feliperamos.app.n8n.cloud/webhook-test/c6bd068c-6aed-4e49-8b82-d0beb4b0e08d",
         data=data,
     )
+    if response.status_code == 200:
+        response_data = response.json()
+        st.write(response_data)
+        # Ensure correct data types
+        response_data["Patient ID"] = str(response_data["Patient ID"])
+        response_data["Name"] = str(response_data["Name"])
+        response_data["Phone"] = str(response_data["Phone"])
+        response_data["Email"] = str(response_data["Email"])
+        response_data["Referral Source"] = str(response_data["Referral Source"])
+        new_patient = pd.DataFrame([response_data])
+        st.session_state.patients = pd.concat(
+            [st.session_state.patients, new_patient], ignore_index=True
+        )
+        st.success(
+            f"Patient successfully registered! Patient ID: {response_data['Patient ID']}"
+        )
+    else:
+        st.error("Error registering patient.")
 
     st.success(f"Patient {patient_name} successfully registered! ID: {patient_id}")

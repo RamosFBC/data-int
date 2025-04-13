@@ -27,7 +27,16 @@ async def initialize_data():
     # Initialize patients data
     if "patients" not in st.session_state:
         if patients_data:
-            st.session_state.patients = pd.DataFrame(patients_data)
+            # Ensure data types
+            # Convert list of dictionaries to DataFrame
+            patients_df = pd.DataFrame(patients_data)
+            # Ensure correct data types
+            patients_df["Patient ID"] = patients_df["Patient ID"].astype(str)
+            patients_df["Name"] = patients_df["Name"].astype(str)
+            patients_df["Phone"] = patients_df["Phone"].astype(str)
+            patients_df["Email"] = patients_df["Email"].astype(str)
+            patients_df["Referral Source"] = patients_df["Referral Source"].astype(str)
+            st.session_state.patients = patients_df
         else:
             st.session_state.patients = pd.DataFrame(
                 columns=[
@@ -44,7 +53,30 @@ async def initialize_data():
     # Initialize appointments data
     if "appointments" not in st.session_state:
         if appointments_data:
-            st.session_state.appointments = pd.DataFrame(appointments_data)
+            # Convert list of dictionaries to DataFrame
+            appointments_df = pd.DataFrame(appointments_data)
+            # Ensure correct data types
+            appointments_df["Date"] = pd.to_datetime(
+                appointments_df["Date"], format="%Y-%m-%d"
+            ).dt.date
+            appointments_df["Time"] = pd.to_datetime(
+                appointments_df["Time"], format="%H:%M:%S"
+            ).dt.time
+            appointments_df["Payment Status"] = pd.to_numeric(
+                appointments_df["Payment Status"], errors="coerce"
+            ).fillna(0.0)
+            appointments_df["Attended"] = appointments_df["Attended"].map(
+                {"false": False, "true": True}
+            )
+            appointments_df["First Appointment"] = appointments_df[
+                "First Appointment"
+            ].map({"false": False, "true": True})
+            appointments_df["Canceled"] = appointments_df["Canceled"].map(
+                {"false": False, "true": True}
+            )
+            appointments_df["Insurance"] = appointments_df["Insurance"].astype(str)
+            appointments_df["row_number"] = appointments_df["row_number"].astype(int)
+            st.session_state.appointments = appointments_df
         else:
             st.session_state.appointments = pd.DataFrame(
                 columns=[
