@@ -56,7 +56,7 @@ if not st.session_state.patients.empty:
         }
 
         response = requests.post(
-            "https://feliperamos.app.n8n.cloud/webhook-test/03bebc41-3821-4a55-9926-c5c7949c839a",
+            st.secrets["n8n"]["post_appointment_url"],
             data=data,
         )
         # Load response return data and update session state

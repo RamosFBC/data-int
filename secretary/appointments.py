@@ -55,7 +55,7 @@ if not todays_appointments.empty:
                     "Attended": True,
                     "Canceled": False,
                 }
-                url = "https://feliperamos.app.n8n.cloud/webhook-test/4b863963-7c56-43f6-84e0-7768137f2645"
+                url = st.secrets["n8n"]["post_attended_url"]
                 response = requests.post(url, json=data)
                 response_data = response.json()
                 # Ensure correct data types
@@ -85,7 +85,7 @@ if not todays_appointments.empty:
                     "Canceled": True,
                     "Attended": False,
                 }
-                url = "https://feliperamos.app.n8n.cloud/webhook-test/4b863963-7c56-43f6-84e0-7768137f2645"
+                url = st.secrets["n8n"]["post_canceled_url"]
                 response = requests.post(url, json=data)
                 response_data = response.json()
                 # Ensure correct data types
@@ -125,7 +125,7 @@ if not todays_appointments.empty:
                     "Appointment ID": appointment["Appointment ID"],
                     "Payment Status": payment,
                 }
-                url = "https://feliperamos.app.n8n.cloud/webhook-test/4b863963-7c56-43f6-84e0-7768137f2645"
+                url = st.secrets["n8n"]["post_payment_url"]
                 response = requests.post(url, json=data)
                 response_data = response.json()
                 # Assuming the API returns the updated payment status

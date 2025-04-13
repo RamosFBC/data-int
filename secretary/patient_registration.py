@@ -52,7 +52,7 @@ if submit_patient:
         "referral_source": referral_source_en,
     }
     response = requests.post(
-        "https://feliperamos.app.n8n.cloud/webhook-test/c6bd068c-6aed-4e49-8b82-d0beb4b0e08d",
+        st.secrets["n8n"]["post_patient_url"],
         data=data,
     )
     if response.status_code == 200:
