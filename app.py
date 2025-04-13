@@ -65,15 +65,27 @@ async def initialize_data():
             appointments_df["Payment Status"] = pd.to_numeric(
                 appointments_df["Payment Status"], errors="coerce"
             ).fillna(0.0)
-            appointments_df["Attended"] = appointments_df["Attended"].map(
-                {"false": False, "true": True}
+
+            # Handle Attended column robustly
+            def convert_to_bool(value):
+                if isinstance(value, bool):
+                    return value
+                if str(value).lower() in ["true", "1", "yes"]:
+                    return True
+                if str(value).lower() in ["false", "0", "no", "null", ""]:
+                    return False
+                return False  # Default to False for unexpected values
+
+            appointments_df["Attended"] = appointments_df["Attended"].apply(
+                convert_to_bool
             )
             appointments_df["First Appointment"] = appointments_df[
                 "First Appointment"
-            ].map({"false": False, "true": True})
-            appointments_df["Canceled"] = appointments_df["Canceled"].map(
-                {"false": False, "true": True}
+            ].apply(convert_to_bool)
+            appointments_df["Canceled"] = appointments_df["Canceled"].apply(
+                convert_to_bool
             )
+
             appointments_df["Insurance"] = appointments_df["Insurance"].astype(str)
             appointments_df["row_number"] = appointments_df["row_number"].astype(int)
             st.session_state.appointments = appointments_df
