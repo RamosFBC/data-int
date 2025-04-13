@@ -125,13 +125,20 @@ ROLES = [None, "Secretary", "Doctor", "Admin"]
 
 
 def login():
-
     st.header("Log in")
-    role = st.selectbox("Choose your role", ROLES)
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
 
     if st.button("Log in"):
-        st.session_state.role = role
-        st.rerun()
+        # Check credentials against st.secrets
+        correct_username = st.secrets.get("admin", {}).get("username")
+        correct_password = st.secrets.get("admin", {}).get("password")
+
+        if username == correct_username and password == correct_password:
+            st.session_state.role = "Admin"
+            st.rerun()
+        else:
+            st.error("Incorrect username or password")
 
 
 def logout():
