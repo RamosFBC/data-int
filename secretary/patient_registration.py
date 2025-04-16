@@ -28,22 +28,9 @@ with st.form("patient_registration"):
     submit_patient = st.form_submit_button("Registrar Paciente")
 
 if submit_patient:
-    # Generate a unique ID for the patient
-    patient_id = len(st.session_state.patients) + 1
     # Convert Portuguese referral source to English for internal use
     referral_source_en = reverse_referral_map[referral_source_pt]
-    new_patient = pd.DataFrame(
-        {
-            "Patient ID": [patient_id],
-            "Name": [patient_name],
-            "Phone": [patient_phone],
-            "Email": [patient_email],
-            "Referral Source": [referral_source_en],
-        }
-    )
-    st.session_state.patients = pd.concat(
-        [st.session_state.patients, new_patient], ignore_index=True
-    )
+
     # make a POST request
     data = {
         "patient_name": patient_name,
@@ -74,4 +61,4 @@ if submit_patient:
     else:
         st.error("Error registering patient.")
 
-    st.success(f"Patient {patient_name} successfully registered! ID: {patient_id}")
+    st.success(f"Patient {patient_name} successfully")
